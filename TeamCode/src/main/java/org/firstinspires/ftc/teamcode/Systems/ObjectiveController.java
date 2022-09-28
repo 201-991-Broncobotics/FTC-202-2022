@@ -25,20 +25,6 @@ public class ObjectiveController {
     if (gamepad.y) { //outtake
       OL.yButton();
     }
-    /*
-        if(gamepad.right_stick_y > 0.25){
-            OL.servoBottom();
-        }
-        if(gamepad.right_stick_y < -0.25){
-            OL.servoMid();
-        }
-        if(gamepad.right_stick_x > 0.25){
-            OL.servoMid();
-        }
-        if(gamepad.right_stick_x < -0.25){
-            OL.servoDump();
-        }*/
-
     if (gamepad.right_trigger > 0.1) {
       OL.speedDuck = 2;
     } else {

@@ -19,19 +19,12 @@ public class TeleOpObjectiveLogic {
   private boolean xPrev = false;
   private boolean yPrev = false;
 
-  private boolean dUpPrev = false;
-  private boolean dDownPrev = false;
-
   private boolean aMotor = false;
   private boolean bMotor = false;
   private boolean xMotor = false;
   private boolean yMotor = false;
 
   public int speedDuck = 1;
-
-  private boolean ArmActive = false;
-
-  private double rPosition = 1;
 
   //Variables
 
@@ -83,10 +76,5 @@ public class TeleOpObjectiveLogic {
     bPrev = g.b;
     xPrev = g.x;
     yPrev = g.y;
-    dUpPrev = g.dpad_up;
-    dDownPrev = g.dpad_down;
-    if (g.left_stick_y > -0.1 && g.left_stick_y < 0.1) {
-      ArmActive = false;
-    }
   }
 }

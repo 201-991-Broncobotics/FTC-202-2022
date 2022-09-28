@@ -2,24 +2,15 @@ package org.firstinspires.ftc.teamcode.Systems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Systems.Utils.DriveTrain;
+import org.firstinspires.ftc.teamcode.Systems.Utils.PidMotor;
 
 public class RobotHardware {
 
@@ -33,11 +24,15 @@ public class RobotHardware {
   public DcMotor LF = null;
   public DcMotor LB = null;
 
+  //  public PidMotor slide = null;
+
+  public DriveTrain driveTrain = null;
+
   public void init(HardwareMap hardwareMap, Telemetry telemetry) {
     this.telemetry = telemetry;
 
     BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-    parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+    parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
     parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
     parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
     parameters.loggingEnabled = true;
@@ -45,29 +40,42 @@ public class RobotHardware {
     parameters.accelerationIntegrationAlgorithm =
       new JustLoggingAccelerationIntegrator();
 
-    imu = hardwareMap.get(BNO055IMU.class, "imu");
-    imu.initialize(parameters);
-
     RF = hardwareMap.get(DcMotor.class, "rightFront");
     RB = hardwareMap.get(DcMotor.class, "rightBack");
     LF = hardwareMap.get(DcMotor.class, "leftFront");
     LB = hardwareMap.get(DcMotor.class, "leftBack");
+
+    //    slide = new PidMotor(hardwareMap.get(DcMotor.class, "slide"), 1);
+
+    driveTrain =
+      new DriveTrain(
+        RF,
+        RB,
+        LF,
+        LB,
+        0.4,
+        0.2,
+        0.1,
+        0,
+        hardwareMap.get(BNO055IMU.class, "imu")
+      );
+
+    driveTrain.imu.getAngularOrientation(
+      AxesReference.INTRINSIC,
+      AxesOrder.ZYX,
+      AngleUnit.RADIANS
+    );
+    driveTrain.imu.initialize(parameters);
 
     RF.setDirection(DcMotor.Direction.REVERSE);
     RB.setDirection(DcMotor.Direction.REVERSE);
     LF.setDirection(DcMotor.Direction.FORWARD);
     LB.setDirection(DcMotor.Direction.FORWARD);
 
-    RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-    //Rev2mDistanceSensor csensorTimeOfFlight = (Rev2mDistanceSensor)cubeSensor;
-    //        Rev2mDistanceSensor dsensorTimeOfFlight = (Rev2mDistanceSensor)dSensor;
+    driveTrain.setZeroPowerBehaviour(DcMotor.ZeroPowerBehavior.BRAKE);
 
     this.map = hardwareMap;
-  } //initializes everything
+  }
 
   public double getAngle() {
     Orientation angles = imu.getAngularOrientation(
@@ -76,115 +84,48 @@ public class RobotHardware {
       AngleUnit.DEGREES
     );
     return angles.firstAngle;
-  } //pretty obvious what it does
+  } // pretty obvious what it does
 
-  public double getBatteryVoltage() {
-    double result = Double.POSITIVE_INFINITY;
-    for (VoltageSensor sensor : map.voltageSensor) {
-      double voltage = sensor.getVoltage();
-      if (voltage > 0) {
-        result = Math.min(result, voltage);
-      }
-    }
-    return result;
-  } //we never need this
-
+  /**
+   * @deprecated use {@link DriveTrain#stopAndResetEncoders()} instead
+   */
   public void ResetEncoders() {
-    LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    driveTrain.stopAndResetEncoders();
   }
 
+  /**
+   * @deprecated use {@link DriveTrain#runToPosition()} instead
+   */
   public void DriveWithEncoders() {
-    LF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    LB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    RF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    RB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    driveTrain.runToPosition();
   }
 
+  /**
+   * @deprecated use {@link DriveTrain#runWithoutEncoders()} instead
+   */
   public void DriveNormally() {
-    LF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    LB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    RF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    RB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    driveTrain.runWithoutEncoders();
   }
 
+  /**
+   * @deprecated use {@link DriveTrain#runWithEncoders()} instead
+   */
   public void SetToEncoders() {
-    LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    driveTrain.runWithEncoders();
   }
 
+  /**
+   * @deprecated use {@link DriveTrain#driveDistance(double)} instead
+   */
   public void DriveDistance(double inches) {
-    int Ticks = (int) Math.round(inches / ((3 * Math.PI) / 767));
-    ResetEncoders();
-    LF.setTargetPosition(Ticks);
-    LB.setTargetPosition(Ticks);
-    RF.setTargetPosition(Ticks);
-    RB.setTargetPosition(Ticks);
-    DriveWithEncoders();
+    driveTrain.driveDistance(inches);
   }
 
+  /**
+   * @deprecated use {@link DriveTrain#driveDistance(double, String)} instead
+   */
   public void DriveDistance(double inches, String Direction) {
-    int Ticks = (int) Math.round(inches / ((3 * Math.PI) / 767));
-    ResetEncoders();
-    switch (Direction) {
-      case "Right":
-        LF.setTargetPosition(-Ticks);
-        LB.setTargetPosition(Ticks);
-        RF.setTargetPosition(Ticks);
-        RB.setTargetPosition(-Ticks);
-        break;
-      case "Left":
-        LF.setTargetPosition(Ticks);
-        LB.setTargetPosition(-Ticks);
-        RF.setTargetPosition(-Ticks);
-        RB.setTargetPosition(Ticks);
-        break;
-      case "Backward":
-        LF.setTargetPosition(Ticks);
-        LB.setTargetPosition(Ticks);
-        RF.setTargetPosition(Ticks);
-        RB.setTargetPosition(Ticks);
-        break;
-      case "Forward":
-        LF.setTargetPosition(-Ticks);
-        LB.setTargetPosition(-Ticks);
-        RF.setTargetPosition(-Ticks);
-        RB.setTargetPosition(-Ticks);
-        break;
-    }
-    DriveWithEncoders();
-  }
-
-  public void turnDegree(int degrees) {
-    double pastHeading = getAngle();
-    double targetHeading = pastHeading + degrees;
-    if (targetHeading > 360) {
-      targetHeading -= 360;
-    }
-    if (targetHeading < 0) {
-      targetHeading += 360;
-    }
-    if (getAngle() < targetHeading) {
-      while (getAngle() < targetHeading) {
-        LF.setPower(0.5);
-        LB.setPower(0.5);
-        RF.setPower(-0.5);
-        RB.setPower(-0.5);
-      }
-    }
-    if (getAngle() > targetHeading) {
-      while (getAngle() > targetHeading) {
-        LF.setPower(-0.5);
-        LB.setPower(-0.5);
-        RF.setPower(0.5);
-        RB.setPower(0.5);
-      }
-    }
-    SpeedSet(0);
+    driveTrain.driveDistance(inches, Direction);
   }
 
   public void turnWEncoders(int inches) {
