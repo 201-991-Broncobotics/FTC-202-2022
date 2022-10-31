@@ -11,17 +11,19 @@ public class RC_OP_1 extends LinearOpMode {
 
   RobotHardware robot = new RobotHardware();
 
-  private ElapsedTime runtime = new ElapsedTime();
+  private final ElapsedTime runtime = new ElapsedTime();
 
   @Override
-  public void runOpMode() throws InterruptedException {
+  public void runOpMode()  {
     robot.init(hardwareMap, telemetry);
 
     waitForStart();
     DriverController driver = new DriverController(robot);
+    ObjectiveController objective = new ObjectiveController(robot);
     while (opModeIsActive()) {
       driver.drive(gamepad1);
       driver.inputs(gamepad1);
+      objective.scuffedArm(gamepad2);
     }
   }
 }

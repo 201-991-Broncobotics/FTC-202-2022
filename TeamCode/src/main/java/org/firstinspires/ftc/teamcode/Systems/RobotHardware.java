@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Systems.Utils.Arm;
 import org.firstinspires.ftc.teamcode.Systems.Utils.DriveTrain;
 import org.firstinspires.ftc.teamcode.Systems.Utils.PidMotor;
 
@@ -23,6 +24,9 @@ public class RobotHardware {
   public DcMotor RB = null;
   public DcMotor LF = null;
   public DcMotor LB = null;
+
+  public DcMotor joint1m1, joint1m2, joint2 = null;
+//  public Arm arm =  null;
 
   //  public PidMotor slide = null;
 
@@ -44,6 +48,10 @@ public class RobotHardware {
     RB = hardwareMap.get(DcMotor.class, "rightBack");
     LF = hardwareMap.get(DcMotor.class, "leftFront");
     LB = hardwareMap.get(DcMotor.class, "leftBack");
+
+    joint1m1 = hardwareMap.get(DcMotor.class, "joint1m1");
+    joint1m2 = hardwareMap.get(DcMotor.class, "joint1m2");
+    joint2 = hardwareMap.get(DcMotor.class, "joint2");
 
     //    slide = new PidMotor(hardwareMap.get(DcMotor.class, "slide"), 1);
 
