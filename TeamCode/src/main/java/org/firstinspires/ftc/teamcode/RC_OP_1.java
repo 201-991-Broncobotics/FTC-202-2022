@@ -14,7 +14,7 @@ public class RC_OP_1 extends LinearOpMode {
   private final ElapsedTime runtime = new ElapsedTime();
 
   @Override
-  public void runOpMode()  {
+  public void runOpMode() {
     robot.init(hardwareMap, telemetry);
 
     waitForStart();

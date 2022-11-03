@@ -51,8 +51,6 @@ public class DriveTrain {
       (double) LF.getCurrentPosition(),
       (double) LB.getCurrentPosition(),
     };
-
-
   }
 
   private double getAngleCorrection(double targetAngle) {

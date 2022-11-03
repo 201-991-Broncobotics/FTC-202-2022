@@ -4,6 +4,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -26,7 +28,8 @@ public class RobotHardware {
   public DcMotor LB = null;
 
   public DcMotor joint1m1, joint1m2, joint2 = null;
-//  public Arm arm =  null;
+  public Servo clawAligner = null ;
+  //  public Arm arm =  null;
 
   //  public PidMotor slide = null;
 
@@ -52,6 +55,8 @@ public class RobotHardware {
     joint1m1 = hardwareMap.get(DcMotor.class, "joint1m1");
     joint1m2 = hardwareMap.get(DcMotor.class, "joint1m2");
     joint2 = hardwareMap.get(DcMotor.class, "joint2");
+
+    clawAligner = hardwareMap.get(Servo.class, "clawAligner");
 
     //    slide = new PidMotor(hardwareMap.get(DcMotor.class, "slide"), 1);
 

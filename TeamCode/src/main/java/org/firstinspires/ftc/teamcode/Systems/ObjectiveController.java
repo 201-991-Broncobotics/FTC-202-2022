@@ -15,11 +15,10 @@ public class ObjectiveController {
   public void scuffedArm(Gamepad gamepad) {
     double LY = -gamepad.left_stick_y;
     double RY = -gamepad.right_stick_y;
-    
+
     robot.joint1m1.setPower(.25 * LY);
     robot.joint1m2.setPower(-.25 * LY);
     robot.joint2.setPower(.25 * RY);
-    
   }
 
   public void inputs(Gamepad gamepad) {
