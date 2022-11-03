@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This class is used to control the arm on the robot
- * <br />The PID (just P) Weights are constants inside of the class, so that's where to change those.
+ * <br />
+ * The PID (just P) Weights are constants inside of the class, so that's where
+ * to change those.
  */
 public class Arm {
 
@@ -14,7 +16,7 @@ public class Arm {
 
   private double JOINT1P = ticksToRadians(.5);
   private double JOINT2P = ticksToRadians(.5);
-  //  double CLAWP = .5, CLAWD = .5;
+  // double CLAWP = .5, CLAWD = .5;
 
   private double currentJoint1Angle, currentJoint2Angle = 0;
   private double targetJoint1Angle, targetJoint2Angle = 0;
@@ -23,11 +25,10 @@ public class Arm {
   private double previousTime, currentTime = 0;
 
   public Arm(
-    DcMotor joint1m1,
-    DcMotor joint1m2,
-    DcMotor joint2,
-    Servo clawAligner
-  ) {
+      DcMotor joint1m1,
+      DcMotor joint1m2,
+      DcMotor joint2,
+      Servo clawAligner) {
     this.joint1m1 = joint1m1;
     this.joint1m2 = joint1m2;
     this.joint2 = joint2;
@@ -37,10 +38,12 @@ public class Arm {
   /**
    * @deprecated don't use, only for testing
    */
-  public Arm() {}
+  public Arm() {
+  }
 
   /**
-   * function to be called in a while loop. It will move the arm to the target angles set by other function calls. <br />
+   * function to be called in a while loop. It will move the arm to the target
+   * angles set by other function calls. <br />
    * Important: does not block the thread
    */
   public void loop() {
@@ -57,9 +60,13 @@ public class Arm {
   }
 
   /**
-   * ONLY AUTONOMOUS USE. Moves to an (x,y) position where the magnitude of (x,y) <= 2
-   * @param x 0 <= x <= 2, where 0 is as close to the initial joint as it can get and 2 is as far out horizontally as it can get
-   * @param y -2 <= y <= 2, where 2 is as high as it can go, and -2 is as low as it can go.
+   * ONLY AUTONOMOUS USE. Moves to an (x,y) position where the magnitude of (x,y)
+   * <= 2
+   *
+   * @param x 0 <= x <= 2, where 0 is as close to the initial joint as it can get
+   *          and 2 is as far out horizontally as it can get
+   * @param y -2 <= y <= 2, where 2 is as high as it can go, and -2 is as low as
+   *          it can go.
    */
   public void goToPosition(double x, double y) {
     setTargetAnglesXY(x, y);
@@ -70,6 +77,7 @@ public class Arm {
 
   /**
    * Checks if the arm is currently moving by using the power of the motors.
+   *
    * @return true if any of the motors are moving, false if they are not
    */
   public boolean isArmMoving() {
@@ -93,27 +101,33 @@ public class Arm {
     currentJoint2Angle = ticksToRadians(joint2.getCurrentPosition());
   }
 
-
   /**
-   * Moves the arm to a certain position. x^2 + y^2 should not be > 2. It handles that exception, but not well.
+   * Moves the arm to a certain position. x^2 + y^2 should not be > 4. It handles
+   * that exception, but not well.
+   *
    * @param x the horizontal position of the arm, max 2
-   * @param y the wanted vertical position of the arm. -2 is the lowest position, 2 is the highest position
-   * @return the value of c <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
+   * @param y the wanted vertical position of the arm. -2 is the lowest position,
+   *          2 is the highest position
+   * @return the value of c <a href="https://i.imgur.com/zeBQZKn.png">in this
+   *         drawing</a>
    */
   private double calculateC(double x, double y) {
     double answer = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     if (answer > 2) {
-      double temp = Math.sqrt(Math.pow(answer - 2, 2) / 2);
-      return calculateC(x - temp, y - temp);
+      return 2;
     } else {
       return answer;
     }
   }
 
   /**
-   * calculates theta <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @param c the value of c <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @return the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a> in radians
+   * calculates theta <a href="https://i.imgur.com/zeBQZKn.png">in this
+   * drawing</a>
+   *
+   * @param c the value of c <a href="https://i.imgur.com/zeBQZKn.png">in this
+   *          drawing</a>
+   * @return the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in this
+   *         drawing</a> in radians
    */
   private double calculateTheta(double c) {
     double theta = Math.acos(-(c * c / 2 - 1));
@@ -121,11 +135,14 @@ public class Arm {
   }
 
   /**
-   * calculates theta <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>.
+   * calculates theta <a href="https://i.imgur.com/zeBQZKn.png">in this
+   * drawing</a>.
    * magnitude of (x,y) <= 2
+   *
    * @param x the wanted horizontal position of the arm, max 2
    * @param y the wanted vertical position of the arm, max 2
-   * @return the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a> in radians
+   * @return the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in this
+   *         drawing</a> in radians
    */
   private double calculateTheta(double x, double y) {
     double c = calculateC(x, y);
@@ -135,20 +152,32 @@ public class Arm {
   /**
    * calculates phi <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>.
    * magnitude of (x,y) <= 2
-   * @param x the wanted horizontal position of the arm, max 2
+   *
+   * @param x the wanted horizontal position of the arm, max 2. should not be 0
    * @param y the wanted vertical position of the arm, max 2
-   * @return the value of phi <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a> in radians
+   * @return the value of phi <a href="https://i.imgur.com/zeBQZKn.png">in this
+   *         drawing</a> in radians between -pi/2 and pi/2
+   *
    */
   private double calculatePhi(double x, double y) {
+    if (x == 0) {
+      x = 0.00000001;
+    }
     double phi = Math.atan(y / x);
     return phi;
   }
 
   /**
-   * calculates the angle of the first joint <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @param theta the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @param phi the value of phi <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @return the angle of the first joint <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a> in radians (0 to pi)
+   * calculates the angle of the first joint
+   * <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
+   *
+   * @param theta the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in
+   *              this drawing</a>
+   * @param phi   the value of phi <a href="https://i.imgur.com/zeBQZKn.png">in
+   *              this drawing</a>
+   * @return the angle of the first joint
+   *         <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a> in
+   *         radians (0 to pi)
    */
   private double calculateJoint1Angle(double theta, double phi) {
     double joint1Angle = Math.PI - (theta / 2) + phi;
@@ -156,9 +185,14 @@ public class Arm {
   }
 
   /**
-   * calculates the angle of the second joint <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @param theta the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @return the angle of the second joint <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a> in radians (0 to pi)
+   * calculates the angle of the second joint
+   * <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
+   *
+   * @param theta the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in
+   *              this drawing</a>
+   * @return the angle of the second joint
+   *         <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a> in
+   *         radians (0 to pi)
    */
   private double calculateJoint2Angle(double theta) {
     double joint2Angle = theta;
@@ -166,10 +200,15 @@ public class Arm {
   }
 
   /**
-   * calculates the angle of the claw aligner servo to make it perfectly horizontal with the ground
-   * @param theta the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @param phi the value of phi <a href="https://i.imgur.com/zeBQZKn.png">in this drawing</a>
-   * @return the angle of the claw aligner servo to make it perfectly horizontal with the ground in radians
+   * calculates the angle of the claw aligner servo to make it perfectly
+   * horizontal with the ground
+   *
+   * @param theta the value of theta <a href="https://i.imgur.com/zeBQZKn.png">in
+   *              this drawing</a>
+   * @param phi   the value of phi <a href="https://i.imgur.com/zeBQZKn.png">in
+   *              this drawing</a>
+   * @return the angle of the claw aligner servo to make it perfectly horizontal
+   *         with the ground in radians
    */
   private double calculateClawAngle(double theta, double phi) {
     double clawAngle = phi - (Math.PI - theta / 2) + theta;
@@ -191,9 +230,8 @@ public class Arm {
 
   public void setTargetAnglesXY(double x, double y) {
     setTargetAnglesThetaPhi(
-      calculateTheta(calculateC(x, y)),
-      calculatePhi(x, y)
-    );
+        calculateTheta(calculateC(x, y)),
+        calculatePhi(x, y));
   }
 
   public double getJoint1Power() {
@@ -248,9 +286,11 @@ public class Arm {
   private void setClawAlignerTargetAngle(double angle) {
     clawAligner.setPosition(radiansToServoPosition(angle));
   }
+
   public double getTargetJoint1Angle() {
     return targetJoint1Angle;
   }
+
   public double getTargetJoint2Angle() {
     return targetJoint2Angle;
   }
