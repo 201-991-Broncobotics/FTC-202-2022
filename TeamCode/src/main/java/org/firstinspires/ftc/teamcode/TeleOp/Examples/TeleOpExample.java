@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Examples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -106,6 +107,7 @@ class TeleOpExampleLogic extends TeleOpLogicBase { //You have to change the clas
 }
 
 @TeleOp(name="TeleOp Example", group="Iterative Opmode") //CHANGE THIS
+@Disabled
 public class TeleOpExample extends LinearOpMode {
     TeleOpExampleLogic logic = new TeleOpExampleLogic();
     @Override

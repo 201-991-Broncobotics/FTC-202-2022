@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Examples;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -65,6 +66,7 @@ class DriverPracticeLogic extends TeleOpLogicBase {
 }
 
 @TeleOp(name="Driver Practice", group="Iterative Opmode")
+@Disabled
 public class DriverPractice extends LinearOpMode {
     DriverPracticeLogic logic = new DriverPracticeLogic();
     StandardTrackingWheelLocalizer localizer;

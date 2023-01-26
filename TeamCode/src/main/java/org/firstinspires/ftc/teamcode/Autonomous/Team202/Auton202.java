@@ -6,46 +6,59 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import static org.firstinspires.ftc.teamcode.Robots.*;
+import static org.firstinspires.ftc.teamcode.TeleOp.Team202.Constants.*;
 
 @Autonomous(name = "Autonomous 202")
 public class Auton202 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        DoubleArm bhajfiwle = new DoubleArm();
-        bhajfiwle.init(hardwareMap);
-        bhajfiwle.start();
+        DoubleArm arm = new DoubleArm();
+        arm.init(hardwareMap);
+        arm.start();
         sleep(2000);
-        bhajfiwle.set_height(1.5);
+        arm.set_height(1.5);
         telemetry.addData("see, it's in a", "thread");
         telemetry.update();
         sleep(4000);
-        bhajfiwle.set_height(0.5);
+        arm.set_height(0.5);
         telemetry.addData("you can also see this because", "the pid is running");
         telemetry.update();
         sleep(4000);
-        bhajfiwle.set_height(-1); // we will have to figure stuff out, or something, i think we can just not reset the encoder values in teleop
+        arm.set_height(-1); // we will have to figure stuff out, or something, i think we can just not reset the encoder values in teleop
         sleep(2000);
     }
 }
 
 class DoubleArm extends Thread {
 
-    private static DcMotor right_motor, left_motor, joint; // left_motor just follows right_motor
+    private static DcMotor right_motor, left_motor, joint2; // left_motor just follows right_motor
     private static double right_motor_target = 0.0, joint_target = 0.0;
-    private static final double first_arm_zero = 410, second_arm_zero = -817, ticks_per_radian = 2786.2109868741 / 2.0 / Math.PI;
 
     private static Servo wrist;
     private static double wrist_target = 0.0;
 
     private static boolean should_be_running = true;
 
-    public static void init(HardwareMap map) {
+    public void init(HardwareMap map) {
         right_motor = map.get(DcMotor.class, "joint1right");
         left_motor = map.get(DcMotor.class, "joint1left");
-        joint = map.get(DcMotor.class, "joint2");
+        joint2 = map.get(DcMotor.class, "joint2");
         wrist = map.get(Servo.class, "clawAligner");
         set_position(1, 0);
+
+        left_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        joint2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        left_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        joint2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        left_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        right_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        joint2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     public static void set_position(double x, double y) {
@@ -80,11 +93,11 @@ class DoubleArm extends Thread {
         wrist_target = target_angle_three;
     }
 
-    public static void set_height(double y) {
+    public void set_height(double y) {
         set_position(1, y);
     }
 
-    public static void quit() {
+    public void quit() {
         should_be_running = false;
     }
 
@@ -93,7 +106,7 @@ class DoubleArm extends Thread {
             right_motor.setPower(Math.max(Math.min(0.02 * (right_motor_target - right_motor.getCurrentPosition()), max_power[0]), min_power[0]));
             left_motor.setPower(right_motor.getPower());
 
-            joint.setPower(Math.max(Math.min(0.02 * (joint_target - joint.getCurrentPosition()), max_power[1]), min_power[1]));
+            joint2.setPower(Math.max(Math.min(0.02 * (joint_target - joint2.getCurrentPosition()), max_power[1]), min_power[1]));
 
             wrist.setPosition(wrist_target);
         }
