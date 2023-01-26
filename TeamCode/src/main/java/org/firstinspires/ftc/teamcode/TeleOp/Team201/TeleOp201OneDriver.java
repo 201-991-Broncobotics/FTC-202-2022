@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Team201;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -74,6 +75,7 @@ class TeleOp201OneDriverLogic extends TeleOpLogicBase {
 }
 
 @TeleOp(name="TeleOp 201 One Driver", group="Iterative Opmode")
+@Disabled
 public class TeleOp201OneDriver extends LinearOpMode {
     TeleOp201OneDriverLogic logic = new TeleOp201OneDriverLogic();
     @Override

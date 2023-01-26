@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.PastCompetitions;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -118,6 +119,7 @@ class TeleOpFreightFrenzyLogic extends TeleOpLogicBase { //You have to change th
 }
 
 @TeleOp(name="TeleOp Freight Frenzy", group="Iterative Opmode") //CHANGE THIS
+@Disabled
 public class TeleOpFreightFrenzy extends LinearOpMode {
     TeleOpFreightFrenzyLogic logic = new TeleOpFreightFrenzyLogic();
     @Override

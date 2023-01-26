@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.teamcode.Logic.DriveType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -76,17 +78,17 @@ public class Robots {
 
     public static void init202() {
         dc_motor_names = new ArrayList<>(Arrays.asList("joint1right", "joint2"));
-        max_power = new double[] {0.4, 0.4};
-        min_power = new double[] {-0.1, -0.2};
+        max_power = new double[] {0.5, 0.5};
+        min_power = new double[] {-0.2, -0.3};
         motor_max_positions = new double[] {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY};
         motor_min_positions = new double[] {Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
         invert_dc_motors = new boolean[] {false, false};
         p_weights = new double[] {0.02, 0.02};
         d_weights = new double[] {0, 0}; // d-control suckssss lmao
 
-        servo_names = new ArrayList<>(Arrays.asList("clawAligner", "claw"));
-        servo_max_positions = new double[] {0.75, 1};
-        servo_min_positions = new double[] {0, 0.5};
+        servo_names = new ArrayList<>(Arrays.asList("clawAligner"));
+        servo_max_positions = new double[] {0.75};
+        servo_min_positions = new double[] {0};
 
         positions = new double[][] {
                 {0, 100, 200, 300}, //Arm Heights
@@ -141,6 +143,8 @@ public class Robots {
         //ordered by left, right, front
         wheel_names = new ArrayList<>(Arrays.asList("rightFront", "rightBack", "leftBack", "leftFront"));
         //ordered by right front, right back, left back, left front
+
+        driveType = DriveType.FELIX;
     }
 
     public static ArrayList<String> dc_motor_names;
@@ -202,6 +206,8 @@ public class Robots {
             "operator left_stick_x", "operator right_stick_x", "operator left_stick_y", "operator right_stick_y", "operator left_trigger",
             "operator right_trigger", "driver left_trigger"
     )); // DO NOT CHANGE THIS
+
+    public static DriveType driveType = DriveType.NORMAL;
 
     public static void init_freight_frenzy() {
         dc_motor_names = new ArrayList<>(Arrays.asList("duckWheel", "arm"));
@@ -331,3 +337,4 @@ public class Robots {
         // ordered by right front, right back, left back, left front
     }
 }
+

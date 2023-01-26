@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp.Team201;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -73,6 +74,7 @@ class TeleOp201Logic extends TeleOpLogicBase {
 }
 
 @TeleOp(name="TeleOp 201", group="Iterative Opmode")
+@Disabled
 public class TeleOp201 extends LinearOpMode {
     TeleOp201Logic logic = new TeleOp201Logic();
     @Override

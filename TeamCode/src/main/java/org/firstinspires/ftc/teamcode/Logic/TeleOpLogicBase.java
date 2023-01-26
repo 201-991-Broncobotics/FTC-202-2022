@@ -19,27 +19,29 @@ public class TeleOpLogicBase extends RobotHardware {
     public static double delta_time = 0;
 
     public static StandardTrackingWheelLocalizer position_tracker;
+    /**
+     <h1>Format: <br /></h1>
+     Motor 1 : button, modifier1, modifier2, modifier3 <br />
+     Servo 1 : button, modifier1, modifier2, modifier3 <br />
 
+     for buttons: save index <br />
+
+     <h2> For Motors/Non-CR Servos: </h2> <br />
+     for modifier1: default = 1, toggle = 2, button = 3, cycle = 4 <br />
+     for modifier2: normal = 0, gradient = 1, power is integer of power * 100 <br />
+     for modifier3: power is integer of power * 100, or index of cycle we use <br />
+     <h2>For CRServos:</h2> <br />
+     for modifier1: default = 1, toggle = 2, button = 3, cycle = 4 <br />
+     for modifier2: normal = 0, gradient = 1, power is integer of power * 100 <br />
+     for modifier3: power is integer of power * 100 <br />
+     <h2>For GoTo:</h2>
+     for modifier1: x * 1000 <br />
+     for modifier2: y * 1000 <br />
+     for modifier3: angle * 1000 (for angle to remain the same set <br />
+     angle to precisely 1 because ain't  no way I set angle to 0.001) <br />
+     */
     public static HashMap<String, ArrayList<Integer>> keybinds = new HashMap<>();
-        /* Format
-            Motor 1 : button, modifier1, modifier2, modifier3, button, modifier1, modifier2, modifier3
-            Servo 1 : button, modifier1, modifier2, modifier3
 
-            for buttons: save index
-
-            For Motors/Non-CR Servos:
-                for modifier1: default = 1, toggle = 2, button = 3, cycle = 4
-                for modifier2: normal = 0, gradient = 1, power is integer of power * 100
-                for modifier3: power is integer of power * 100, or index of cycle we use
-            For CRServos:
-                for modifier1: default = 1, toggle = 2, button = 3, cycle = 4
-                for modifier2: normal = 0, gradient = 1, power is integer of power * 100
-                for modifier3: power is integer of power * 100
-            For GoTo:
-                for modifier1: x * 1000
-                for modifier2: y * 1000
-                for modifier3: angle * 1000 (for angle to remain the same set angle to precisely 1 because ain't no way I set angle to 0.001)
-         */
 
     public static double[] dc_times_started; // in seconds
     public static double[] dc_target_positions;
@@ -160,86 +162,113 @@ public class TeleOpLogicBase extends RobotHardware {
     }
 
     public static void drive(Gamepad gamepad) {
-        double speedFactor = 1 + 2 * gamepad.right_trigger;
+        switch (driveType) {
+            case NORMAL: {
+                double speedFactor = 1 + 2 * gamepad.right_trigger;
 
-        double left_stick_magnitude = Math.sqrt(gamepad.left_stick_x * gamepad.left_stick_x + gamepad.left_stick_y * gamepad.left_stick_y);
-        if (left_stick_magnitude <= 0.333) left_stick_magnitude = 0.0;
-        double left_stick_angle =
-            (left_stick_magnitude <= 0.333) ? -Math.PI / 2.0 :
-            (gamepad.left_stick_x > 0) ? Math.atan(gamepad.left_stick_y / gamepad.left_stick_x) :
-            (gamepad.left_stick_x < 0) ? Math.PI + Math.atan(gamepad.left_stick_y / gamepad.left_stick_x) :
-            (gamepad.left_stick_y > 0) ? Math.PI / 2.0 : -Math.PI / 2.0;
-        left_stick_angle += Math.PI/2.0;
+                double left_stick_magnitude = Math.sqrt(gamepad.left_stick_x * gamepad.left_stick_x + gamepad.left_stick_y * gamepad.left_stick_y);
+                if (left_stick_magnitude <= 0.333) left_stick_magnitude = 0.0;
+                double left_stick_angle =
+                        (left_stick_magnitude <= 0.333) ? -Math.PI / 2.0 :
+                                (gamepad.left_stick_x > 0) ? Math.atan(gamepad.left_stick_y / gamepad.left_stick_x) :
+                                        (gamepad.left_stick_x < 0) ? Math.PI + Math.atan(gamepad.left_stick_y / gamepad.left_stick_x) :
+                                                (gamepad.left_stick_y > 0) ? Math.PI / 2.0 : -Math.PI / 2.0;
+                left_stick_angle += Math.PI / 2.0;
 
-        double right_stick_magnitude = Math.sqrt(gamepad.right_stick_x * gamepad.right_stick_x + gamepad.right_stick_y * gamepad.right_stick_y);
-        if (right_stick_magnitude <= 0.333) right_stick_magnitude = 0.0;
-        double right_stick_angle =
-            (right_stick_magnitude <= 0.333) ? -Math.PI / 2.0 :
-            (gamepad.right_stick_x > 0) ? Math.atan(gamepad.right_stick_y / gamepad.right_stick_x) :
-            (gamepad.right_stick_x < 0) ? Math.PI + Math.atan(gamepad.right_stick_y / gamepad.right_stick_x) :
-            (gamepad.right_stick_y > 0) ? Math.PI / 2.0 : -Math.PI / 2.0;
-        right_stick_angle += Math.PI/2.0;
+                double right_stick_magnitude = Math.sqrt(gamepad.right_stick_x * gamepad.right_stick_x + gamepad.right_stick_y * gamepad.right_stick_y);
+                if (right_stick_magnitude <= 0.333) right_stick_magnitude = 0.0;
+                double right_stick_angle =
+                        (right_stick_magnitude <= 0.333) ? -Math.PI / 2.0 :
+                                (gamepad.right_stick_x > 0) ? Math.atan(gamepad.right_stick_y / gamepad.right_stick_x) :
+                                        (gamepad.right_stick_x < 0) ? Math.PI + Math.atan(gamepad.right_stick_y / gamepad.right_stick_x) :
+                                                (gamepad.right_stick_y > 0) ? Math.PI / 2.0 : -Math.PI / 2.0;
+                right_stick_angle += Math.PI / 2.0;
 
-        left_stick_angle = modifiedAngle(left_stick_angle);
-        right_stick_angle = modifiedAngle(right_stick_angle);
+                left_stick_angle = modifiedAngle(left_stick_angle);
+                right_stick_angle = modifiedAngle(right_stick_angle);
 
-        // Positive angles --> clockwise
-        // Zero --> vertical
+                // Positive angles --> clockwise
+                // Zero --> vertical
 
-        if (usePID) {
-            current_angle = 0 - getAngle() - zero_angle;
-        } else if (useRoadRunner) {
-            position_tracker.update();
-            Pose2d currentPose = position_tracker.getPoseEstimate();
+                if (usePID) {
+                    current_angle = 0 - getAngle() - zero_angle;
+                } else if (useRoadRunner) {
+                    position_tracker.update();
+                    Pose2d currentPose = position_tracker.getPoseEstimate();
 
-            current_x = currentPose.getX();
-            current_y = currentPose.getY();
+                    current_x = currentPose.getX();
+                    current_y = currentPose.getY();
 
-            current_angle = 0 - currentPose.getHeading() - zero_angle;
-        } // current_angle: same angle system as left/right stick angle
+                    current_angle = 0 - currentPose.getHeading() - zero_angle;
+                } // current_angle: same angle system as left/right stick angle
 
-        double distance_factor;
-        double offset;
+                double distance_factor;
+                double offset;
 
-        if (left_stick_magnitude != 0) {
-            distance_factor = left_stick_magnitude;
+                if (left_stick_magnitude != 0) {
+                    distance_factor = left_stick_magnitude;
 
-            if (locked_motion) {
-                offset = modifiedAngle(left_stick_angle - current_angle);
-            } else {
-                offset = left_stick_angle;
+                    if (locked_motion) {
+                        offset = modifiedAngle(left_stick_angle - current_angle);
+                    } else {
+                        offset = left_stick_angle;
+                    }
+
+                    if (useRoadRunner) {
+                        target_x = current_x;
+                        target_y = current_y;
+                    }
+
+                } else {
+
+                    distance_factor = Math.sqrt((current_x - target_x) * (current_x - target_x) + (current_y - target_y) * (current_y - target_y)) * distance_weight_two;
+                    // zero by default if not using RoadRunner :)
+
+                    double line_angle = (target_x > current_x) ? Math.atan(((float) target_y - (float) current_y) / ((float) target_x - (float) current_x)) :
+                            (target_x < current_x) ? Math.PI + Math.atan(((float) target_y - (float) current_y) / ((float) target_x - (float) current_x)) :
+                                    (target_y > current_y) ? Math.PI / 2.0 : -Math.PI / 2.0;
+
+                    line_angle += Math.PI / 2.0;
+                    offset = modifiedAngle(line_angle - current_angle);
+                }
+
+                double turning_factor = 0;
+
+                if (right_stick_magnitude != 0) {
+                    if (locked_rotation) {
+                        target_angle = right_stick_angle;
+                    } else { // if we're driving normally
+                        target_angle = current_angle;
+                        turning_factor = gamepad.right_stick_x;
+                    }
+                } // target angle remains constant if we aren't turning manually
+
+                drive(turning_factor, distance_factor, offset, speedFactor);
             }
+            case FELIX: {
+                final double TRIGGER_SENSITIVITY = 0.65;
+                final double BUTTON_SENSITIVITY = 0.3;
+                final double LEFT_SENSITIVITY = 1;
+                final double RIGHT_SENSITIVITY = 0.3;
 
-            if (useRoadRunner) {
-                target_x = current_x;
-                target_y = current_y;
+                double LX = gamepad.left_stick_x;
+                double LY = gamepad.left_stick_y;
+                double RX = gamepad.right_stick_x;
+                double RY = gamepad.right_stick_y;
+
+                double turnAmount = gamepad.left_trigger*TRIGGER_SENSITIVITY
+                        - gamepad.right_trigger*TRIGGER_SENSITIVITY
+                        + ((gamepad.left_bumper) ? BUTTON_SENSITIVITY : 0)
+                        + (gamepad.right_bumper ? -BUTTON_SENSITIVITY : 0);
+
+                double[] vec = {
+                        LX*LEFT_SENSITIVITY + RX*RIGHT_SENSITIVITY,
+                        LY*LEFT_SENSITIVITY + RY*RIGHT_SENSITIVITY
+                };
+
+                drive(vec, turnAmount);
             }
-
-        } else {
-
-            distance_factor = Math.sqrt((current_x - target_x) * (current_x - target_x) + (current_y - target_y) * (current_y - target_y)) * distance_weight_two;
-            // zero by default if not using RoadRunner :)
-
-            double line_angle = (target_x > current_x) ? Math.atan(((float) target_y - (float) current_y)/((float) target_x - (float) current_x)) :
-                (target_x < current_x) ? Math.PI + Math.atan(((float) target_y - (float) current_y)/((float) target_x - (float) current_x)) :
-                (target_y > current_y) ? Math.PI / 2.0 : -Math.PI / 2.0;
-
-            line_angle += Math.PI / 2.0;
-            offset = modifiedAngle(line_angle - current_angle);
         }
-
-        double turning_factor = 0;
-
-        if (right_stick_magnitude != 0) {
-            if (locked_rotation) {
-                target_angle = right_stick_angle;
-            } else { // if we're driving normally
-                target_angle = current_angle;
-                turning_factor = gamepad.right_stick_x;
-            }
-        } // target angle remains constant if we aren't turning manually
-
-        drive(turning_factor, distance_factor, offset, speedFactor);
     }
 
     public static void drive(double turning_factor, double distance_factor, double offset, double speedFactor) {
@@ -255,6 +284,58 @@ public class TeleOpLogicBase extends RobotHardware {
         for (int i = 0; i < 4; i++) {
             wheel_list[i].setPower(max_speed * power[i] / maximum / speedFactor);
         }
+    }
+
+    /**
+     *
+     * @param vec array of len 2 of the vector that the drive is on. x and y must not be > 1. [x,y]
+     * @param turnAmount the power given to turning changes. left is negative
+     */
+    public static void drive( double[] vec, double turnAmount) {
+
+        if (vec.length !=2 ) {
+            throw new IllegalArgumentException("drive function vec len > 2");
+        }
+
+        double x = vec[0];
+        double y = vec[1];
+
+        double[] powers = new double[4];
+
+        // rightFront
+        powers[0] = y-x;
+        // rightBack
+        powers[1] = y+x;
+        // leftBack
+        powers[2] = y-x;
+        // leftFront
+        powers[3] = y+x;
+
+        powers[0]-=turnAmount;
+        powers[1]-= turnAmount;
+        powers[2]+=turnAmount;
+        powers[3]+=turnAmount;
+
+        if (max(powers) > 1) {
+            double max = max(powers);
+            for (int i = 0; i < powers.length; i++) {
+                powers[i]/=max;
+            }
+        }
+
+        for (int i =0; i<4; i++) wheel_list[i].setPower(powers[i]);
+    }
+
+    /**
+     * finds the greatest absolute val in the arr
+     */
+    private static double max(double[] arr) {
+        double max = Double.NEGATIVE_INFINITY;
+        for (double v : arr) {
+            max = Math.max(max, Math.abs(v));
+        }
+
+        return max;
     }
 
     public static double getCorrection() {
@@ -483,6 +564,18 @@ public class TeleOpLogicBase extends RobotHardware {
         }
     }
 
+    /**
+     * multiple buttons can access the same motor in different ways (i.e. they don't have to have the same parameters) <br />
+     * same buttons can control 2 different motors <br />
+     *
+     * @throws IllegalArgumentException if you misspell a motor or button
+     * @param motor from config file OR "goto" (if you want to move the robot)
+     * @param button has to be same as it appears in keys
+     * @param modifier1 default/toggle OR button/cycle (not CR Servo) OR target x (if motor is "goto"). Default - active
+     *                  when held down, Default (axis) - multiplier of axis depth too, Toggle - activate when pressed, then deactivate on next release, Button - activate on moment that button is pushed down
+     * @param modifier2 gradient/normal OR power down for axis OR how much we increment list OR target y
+     * @param modifier3 power for button OR power up for axis OR index of list in positions OR target angle (leave as "none" if you don't want to change angle of robot)
+     */
     public static void new_keybind(String motor, String button, Object modifier1, Object modifier2, Object modifier3) {
         if (!keybinds.containsKey(motor)) throw new IllegalArgumentException("You misspelled " + motor + " - make sure its exactly as it's spelled in dc motor list or servo list, or it's \"goto\". Idiot");
         if (!(keys.contains(button))) throw new IllegalArgumentException("You misspelled " + button + "  - make sure its exactly as it's spelled in keys. ");

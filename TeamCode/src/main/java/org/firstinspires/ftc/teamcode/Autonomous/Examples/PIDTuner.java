@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.Autonomous.Examples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Logic.RoadRunner.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.Logic.RobotHardware;
 
 @Autonomous(name = "PD Tuner")
+@Disabled
 public class PIDTuner extends LinearOpMode {
 
     RobotHardware robot = new RobotHardware();

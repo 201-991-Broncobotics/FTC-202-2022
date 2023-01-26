@@ -102,30 +102,7 @@ class TeleOpExampleLogic extends TeleOpLogicBase { //You have to change the clas
 
     }
 
-    /*
-      KEY BINDS INSTRUCTIONS
-        * We can have the same button control 2 different things, but it has to have the same type (button/cycle/toggle/default) each time
-        * Button name has to be same as it appears in keys
-        *
-        * Default: active while held down
-            * Default (axis): also has a multiplier of the axis depth for the power, INCLUDING DIRECTION (down multiplies by -1)
-        * Toggle: activate when pressed, then deactivate on next release
-        * Button: only activate on moment that button is pushed down
-        *
-        * new_keybind(
-                    motor_name  (from config file                                                         OR "goto")
-                    modifier1   (default/toggle                           OR button/cycle (not CR Servo)  OR target x)
-                    modifier2   (gradient/normal OR power down for axis   OR how much we increment list   OR target y)
-                    modifier3   (power for button OR power up for axis    OR index of list in positions   OR target angle (leave as "none" if you don't want to change angle of robot))
-        *
-        * For any error, there will be an IllegalArgumentException thrown showing you where the error is.
-      FEATURES
-        * we can have multiple buttons, from either controller, access the same motor in
-                different ways (i.e. they don't have to have the same parameters)
-        * we can have the same button control 2 different motors
-        * can change button functions freely - toggle, button, default and all their parameters
-        * not all buttons have to be used
-     */
+
 }
 
 @TeleOp(name="TeleOp Example", group="Iterative Opmode") //CHANGE THIS

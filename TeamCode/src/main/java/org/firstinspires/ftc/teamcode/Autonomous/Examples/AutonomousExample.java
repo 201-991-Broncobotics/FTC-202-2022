@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous.Examples;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Logic.RoadRunner.StandardTrackingWheelLocalizer;
@@ -98,6 +99,7 @@ class Auton extends Thread {
 }
 
 @Autonomous(name = "Autonomous Example")
+@Disabled
 public class AutonomousExample extends LinearOpMode {
 
     AutonomousLogicBase r = new AutonomousLogicBase();
