@@ -14,10 +14,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class AutonomousLogicBase extends RobotHardware {
 
-    public static OpenCvWebcam webcam;
-    private static CameraManager cameraManager;
-    private static OpenCvCameraRotation rotation = OpenCvCameraRotation.UPRIGHT;
-
     public static void wait(double seconds) {
         double start = System.nanoTime() / 1000000000.0;
         while (System.nanoTime() / 1000000000.0 - start < seconds) { /* wait */ }
@@ -129,81 +125,4 @@ public class AutonomousLogicBase extends RobotHardware {
     public static void initialize_RoadRunner() {}
 
     public static void initialize_tensorflow() {}
-
-    public static void initialize_webcam() {
-        int cameraMonitorViewId = map.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", map.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(map.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-    }
-
-    public static void setWebcamRotation(OpenCvCameraRotation _rotation) {
-        rotation = _rotation;
-    }
-
-    public String readQrCode() {
-
-        QRCodeDetector detector = new QRCodeDetector();
-
-        class Pipeline  extends OpenCvPipeline {
-
-            private String result = "L";
-
-            public Pipeline() {
-                super();
-            }
-
-            @Override
-            public Mat processFrame(Mat input) {
-
-                this.result = detector.detectAndDecodeCurved(input);
-
-                return input;
-            }
-
-            public String getResult() {
-                return this.result;
-            }
-        }
-
-        Pipeline pipeline = new Pipeline();
-
-        webcam.setPipeline(pipeline);
-
-        /*
-         * Open the connection to the camera device. New in v1.4.0 is the ability
-         * to open the camera asynchronously, and this is now the recommended way
-         * to do it. The benefits of opening async include faster init time, and
-         * better behavior when pressing stop during init (i.e. less of a chance
-         * of tripping the stuck watchdog)
-         *
-         * If you really want to open synchronously, the old method is still available.
-         */
-        webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                webcam.startStreaming(1280, 720, rotation);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                throw new IllegalArgumentException("Camera open error " + errorCode);
-            }
-        });
-
-        String result = pipeline.getResult();
-
-        double startTime = System.currentTimeMillis();
-
-        while (!result.equals("L") || System.currentTimeMillis() - startTime < 2000) {
-            result = pipeline.getResult();
-        }
-
-        webcam.stopStreaming();
-
-        return result;
-    }
-
 }

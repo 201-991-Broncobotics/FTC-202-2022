@@ -16,6 +16,7 @@ public class TeleOpLogicBase extends RobotHardware {
     // run .init201() then .init()
     private static double previous_time = System.nanoTime() / 1000000000.0;
     public static double current_time = System.nanoTime() / 1000000000.0;
+    /** time since last loop in seconds */
     public static double delta_time = 0;
 
     public static StandardTrackingWheelLocalizer position_tracker;

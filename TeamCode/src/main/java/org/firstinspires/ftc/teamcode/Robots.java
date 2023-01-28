@@ -78,13 +78,13 @@ public class Robots {
 
     public static void init202() {
         dc_motor_names = new ArrayList<>(Arrays.asList("joint1right", "joint2"));
-        max_power = new double[] {0.5, 0.5};
+        max_power = new double[] {0.55, 0.55};
         min_power = new double[] {-0.2, -0.3};
         motor_max_positions = new double[] {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY};
         motor_min_positions = new double[] {Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
         invert_dc_motors = new boolean[] {false, false};
         p_weights = new double[] {0.02, 0.02};
-        d_weights = new double[] {0, 0}; // d-control suckssss lmao
+        d_weights = new double[] {0, 0};
 
         servo_names = new ArrayList<>(Arrays.asList("clawAligner"));
         servo_max_positions = new double[] {0.75};
@@ -145,6 +145,9 @@ public class Robots {
         //ordered by right front, right back, left back, left front
 
         driveType = DriveType.FELIX;
+
+        robot_width = 10.393701;
+        robot_length = 14.373228;
     }
 
     public static ArrayList<String> dc_motor_names;

@@ -74,6 +74,7 @@ public class RobotHardware extends Robots {
             wheel_list[i] = hardwareMap.get(DcMotor.class, wheel_names.get(i));
             wheel_list[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wheel_list[i].setDirection(i > 1 ? DcMotor.Direction.FORWARD : DcMotor.Direction.REVERSE);
+            wheel_list[i].setTargetPosition(0);
         }
 
         for (int i = 0; i < distance_sensor_list.length; i++)

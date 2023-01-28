@@ -19,13 +19,13 @@ class TeleOp202Logic extends TeleOpLogicBase {
 
     public static Servo claw;
 
-    public static int wristRotate = 0;
+    public static double wristAngle = 0;
 
     public static void execute_non_driver_controlled() {
         if (buttons[4]) ty += delta_time * lift_speed;
         if (buttons[5]) ty -= delta_time * lift_speed;
-        if (buttons[6]) tx -= delta_time * in_speed;
-        if (buttons[7]) tx += delta_time * in_speed;
+        if (buttons[6]) tx += delta_time * in_speed;
+        if (buttons[7]) tx -= delta_time * in_speed;
 
         tx += axes[0] * delta_time * stick_in_speed; // left stick x
         tx += axes[1] * delta_time * stick_in_speed * 1.0 / 3.0; // right stick x
@@ -38,11 +38,11 @@ class TeleOp202Logic extends TeleOpLogicBase {
         }
         if (buttons[9]) {
             // op right bumper
-            claw.setPosition(claw_close);
+            claw.setPosition(claw_closed);
         }
 
         if (buttons[0]) /* op a */ {
-            ty = -1;
+            ty = -0.9;
             tx = 1;
         }
         if (buttons[1]) /* op b */ {
@@ -50,33 +50,33 @@ class TeleOp202Logic extends TeleOpLogicBase {
             tx = 0.5;
         }
         if (buttons[2]) /* op x */ {
-            ty = -0.7;
+            ty = -0.6;
             tx = 0.3;
         }
         if (buttons[3]) /* op y */ {
-            ty = 1.95;
+            ty = 1.93;
             tx = Math.sqrt(4 - ty * ty);
         }
 
-        if (axes[4] > 0.5) /* op left trigger */ {
-            if (wristRotate > -1) {
-                wristRotate--;
-            }
-        }
-        if (axes[5] > 0.5) /* op right trigger */ {
-            if (wristRotate < 1) {
-                wristRotate++;
-            }
-        }
+        double lt = axes[4];
+        double rt = axes[5];
 
+        if (lt > 0.5 && rt > 0.5) {
+            // reset wrist angle to even with ground.
+            wristAngle = 0;
+        } else {
+            wristAngle += (rt - lt) * delta_time * wrist_angle_speed;
+        }
 
         if (ty >= 2) ty = 2;
         if (tx >= 2) tx = 2;
-        if (ty < -1) ty = -1;
+        if (ty < -1.2) ty = -1.2;
         if (tx < 0.7) {
-            if (ty < -0.3) {
+            if (ty < -0.65) {
                 tx = 0.7;
-            } else if (tx < 0.3) tx = 0.3;
+            } else if (tx < 0.3) {
+                tx = 0.3;
+            }
         }
         double magnitude = Math.sqrt(tx * tx + ty * ty);
 
@@ -93,7 +93,7 @@ class TeleOp202Logic extends TeleOpLogicBase {
 
         double target_angle_one = temp_angle + secondary_angle;
         double target_angle_two = target_angle_one + primary_angle - Math.PI;
-        double target_angle_three = 0 - target_angle_two - (wristRotate * Math.PI / 4);
+        double target_angle_three = 0 - target_angle_two - wristAngle;
         // removing the initial angle
 
         target_angle_one *= ticks_per_radian;
@@ -103,7 +103,7 @@ class TeleOp202Logic extends TeleOpLogicBase {
 
         target_angle_one += first_arm_zero;
         target_angle_two += second_arm_zero;
-        target_angle_three = target_angle_three * wrist_m + wrist_b; // very good guessing ig
+        target_angle_three = target_angle_three * wrist_m + wrist_b;
 
         dc_target_positions[0] = target_angle_one;
         left_motor.setPower(dc_motor_list[0].getPower());
@@ -131,7 +131,8 @@ class TeleOp202Logic extends TeleOpLogicBase {
         claw = map.get(Servo.class, "claw");
         left_motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         joint2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        servo_target_positions[0] = 0.6;
+
+        claw.setPosition(claw_closed);
     }
 
     public static void resetEncoders() {
