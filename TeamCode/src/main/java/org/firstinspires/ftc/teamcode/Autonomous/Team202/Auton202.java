@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous.Team202;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import static org.firstinspires.ftc.teamcode.Robots.*;
 import static org.firstinspires.ftc.teamcode.TeleOp.Team202.Constants.claw_closed;
@@ -8,7 +9,8 @@ import static org.firstinspires.ftc.teamcode.TeleOp.Team202.Constants.claw_close
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.DriveDirection;
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.OpenCV;
 
-@Autonomous(name = "Autonomous 202 Main")
+@Autonomous(name = "Autonomous 202 Main (old)")
+@Disabled
 public class Auton202 extends LinearOpMode {
     String qrcodeResult;
 
@@ -31,11 +33,11 @@ public class Auton202 extends LinearOpMode {
 
         double distance = 36 - robot_length / 2 - 24;
 
-        logic.driveInches(4 * distance / 5 , DriveDirection.BACKWARD);
+        logic.driveInches(4 * distance / 5 , DriveDirection.FORWARD);
         sleep(2000);
 
         camera.lock();
-        logic.driveInches(distance / 5, DriveDirection.BACKWARD);
+        logic.driveInches(distance / 5, DriveDirection.FORWARD);
 
         String result = camera.getResult();
         camera.stopStreaming();
@@ -48,25 +50,24 @@ public class Auton202 extends LinearOpMode {
         switch (result) {
             // 1
             case "Purple": {
-                logic.driveInches(2, DriveDirection.BACKWARD);
+                logic.driveInches(2, DriveDirection.FORWARD);
                 sleep(2000);
-                // it went backwards idk
-                logic.driveInches(18, DriveDirection.LEFT);
+                logic.driveInches(18, DriveDirection.RIGHT);
                 break;
             }
 
             // 2
             case "Yellow": {
-                logic.driveInches(2, DriveDirection.BACKWARD);
+                logic.driveInches(2, DriveDirection.FORWARD);
                 sleep(2000);
                 break;
             }
 
             // 3
             case "Cyan": {
-                logic.driveInches(2, DriveDirection.BACKWARD);
+                logic.driveInches(2, DriveDirection.FORWARD);
                 sleep(2000);
-                logic.driveInches(18, DriveDirection.RIGHT);
+                logic.driveInches(18, DriveDirection.LEFT);
                 break;
             }
         }

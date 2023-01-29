@@ -8,7 +8,6 @@ import static org.firstinspires.ftc.teamcode.TeleOp.Team202.Constants.*;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.DriveDirection;
-import org.firstinspires.ftc.teamcode.Logic.AutonomousLogicBase;
 
 public class AutonLogic202 {
     public static DoubleArm arm;
@@ -39,9 +38,6 @@ public class AutonLogic202 {
         wheel_list[1].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheel_list[2].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheel_list[3].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-//        lf.setDirection(DcMotorSimple.Direction.REVERSE);
-//        lb.setDirection(DcMotorSimple.Direction.REVERSE);
 
         rf.setDirection(DcMotorSimple.Direction.REVERSE);
         rb.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -97,6 +93,7 @@ public class AutonLogic202 {
 
     }
 
+    /** @deprecated */
     public static void driveBad(DriveDirection direction) {
         switch (direction) {
             case FORWARD: {
@@ -126,20 +123,21 @@ public class AutonLogic202 {
 
     public static void driveTicks(double ticks, DriveDirection direction) {
         resetEncoders();
+        // dont worry about why its all backwards :)
         switch (direction) {
-            case FORWARD: {
-                setWheelPositions(new double[] { ticks, ticks, ticks, ticks });
+            case BACKWARD: {
+                setWheelPositions(new double[] { +ticks, +ticks, +ticks, +ticks });
                 break;
             }
-            case BACKWARD: {
+            case FORWARD: {
                 setWheelPositions(new double[] { -ticks, -ticks, -ticks, -ticks });
                 break;
             }
-            case LEFT: {
+            case RIGHT: {
                 setWheelPositions(new double[] { +ticks, -ticks, +ticks, -ticks });
                 break;
             }
-            case RIGHT: {
+            case LEFT: {
                 setWheelPositions(new double[] { -ticks, +ticks, -ticks, +ticks });
                 break;
             }
@@ -152,7 +150,7 @@ public class AutonLogic202 {
     }
 
     public static void driveInches(double inches, DriveDirection direction) {
-        int ticks = (int) Math.round(inches / ((3 * Math.PI) / 767));
+        int ticks = (int) (inches * DRIVETRAIN_TICKS_PER_INCH);
         driveTicks(ticks, direction);
     }
 

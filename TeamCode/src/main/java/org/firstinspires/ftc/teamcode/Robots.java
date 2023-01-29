@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.teamcode.Logic.DriveType;
+import org.firstinspires.ftc.teamcode.TeleOp.Team202.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,9 +136,6 @@ public class Robots {
         strafing_multiplier = 1.0;
         turning_multiplier = 1.0;
 
-        robot_width = 10;
-        robot_length = 18;
-
         encoderNames = new ArrayList<>(Arrays.asList("leftEncoder", "rightEncoder", "frontEncoder"));
         invert_encoders = new boolean[] {false, false, false};
         //ordered by left, right, front
@@ -146,8 +144,8 @@ public class Robots {
 
         driveType = DriveType.FELIX;
 
-        robot_width = 10.393701;
-        robot_length = 14.373228;
+        robot_width = Constants.robot_width;
+        robot_length = Constants.robot_length;
     }
 
     public static ArrayList<String> dc_motor_names;

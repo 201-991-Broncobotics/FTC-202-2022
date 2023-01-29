@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Autonomous.Team202;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.DriveDirection;
 
 @Autonomous(name="basic forward")
+@Disabled
 public class BasicAutonForward extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

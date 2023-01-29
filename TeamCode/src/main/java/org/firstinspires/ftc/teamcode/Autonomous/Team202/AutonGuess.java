@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous.Team202;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import static org.firstinspires.ftc.teamcode.Robots.*;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.DriveDirection;
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.OpenCV;
 
 @Autonomous(name = "Autonomous 202 GUESS")
+@Disabled
 public class AutonGuess extends LinearOpMode {
     String qrcodeResult;
 
