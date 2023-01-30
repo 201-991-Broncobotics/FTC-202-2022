@@ -49,8 +49,9 @@ public class AprilTag extends Thread {
 
     private static Telemetry telem;
 
-    public void init(HardwareMap hardwareMap) {
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+    public void init(HardwareMap hardwareMap, Telemetry _telem) {
+        telem = _telem;
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy, telem);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -81,6 +82,11 @@ public class AprilTag extends Thread {
                     if (tag.id == tag1id) tag1count++;
                     if (tag.id == tag2id) tag2count++;
                     if (tag.id == tag3id) tag3count++;
+
+                    telem.addData("tag1 detections", tag1count);
+                    telem.addData("tag2 detections", tag2count);
+                    telem.addData("tag3 detections", tag3count);
+                    telem.update();
                 }
             }
         }
@@ -113,6 +119,8 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
     private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
     private final Object detectionsUpdateSync = new Object();
 
+    private static Telemetry telem;
+
     Mat cameraMatrix;
 
     Scalar blue = new Scalar(7,197,235,255);
@@ -134,7 +142,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy) {
+    public AprilTagDetectionPipeline(double tagsize, double fx, double fy, double cx, double cy, Telemetry _telem) {
         this.tagsize = tagsize;
         this.tagsizeX = tagsize;
         this.tagsizeY = tagsize;
@@ -142,6 +150,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
         this.fy = fy;
         this.cx = cx;
         this.cy = cy;
+        telem = _telem;
 
         constructMatrix();
 

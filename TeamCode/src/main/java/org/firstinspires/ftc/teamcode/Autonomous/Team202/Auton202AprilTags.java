@@ -19,7 +19,7 @@ public class Auton202AprilTags extends LinearOpMode {
     public void runOpMode() {
 
         logic.init(hardwareMap, telemetry);
-        aprilTag.init(hardwareMap);
+        aprilTag.init(hardwareMap, telemetry);
 
         aprilTag.startScanning();
 

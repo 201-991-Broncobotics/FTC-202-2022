@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.Logic.TeleOpLogicBase;
 
 import static org.firstinspires.ftc.teamcode.TeleOp.Team202.Constants.*;
 
+import java.util.ArrayList;
+
 class TeleOp202Logic extends TeleOpLogicBase {
 
     public static double starting_time;
@@ -42,7 +44,7 @@ class TeleOp202Logic extends TeleOpLogicBase {
         }
 
         if (buttons[0]) /* op a */ {
-            ty = -0.9;
+            ty = -1;
             tx = 1;
         }
         if (buttons[1]) /* op b */ {
@@ -70,7 +72,7 @@ class TeleOp202Logic extends TeleOpLogicBase {
 
         if (ty >= 2) ty = 2;
         if (tx >= 2) tx = 2;
-        if (ty < -1.2) ty = -1.2;
+        if (ty < -1.15) ty = -1.15;
         if (tx < 0.7) {
             if (ty < -0.65) {
                 tx = 0.7;
@@ -93,7 +95,8 @@ class TeleOp202Logic extends TeleOpLogicBase {
 
         double target_angle_one = temp_angle + secondary_angle;
         double target_angle_two = target_angle_one + primary_angle - Math.PI;
-        double target_angle_three = 0 - target_angle_two - wristAngle;
+        double current_angle_two = (dc_motor_list[1].getCurrentPosition() - second_arm_zero) / ticks_per_radian;
+        double target_angle_three = 0 - current_angle_two - wristAngle;
         // removing the initial angle
 
         target_angle_one *= ticks_per_radian;
@@ -113,7 +116,7 @@ class TeleOp202Logic extends TeleOpLogicBase {
         servo_target_positions[0] = target_angle_three;
         telemetry.addData("position", servo_list[0].getPosition());
 
-        telemetry.addData("tx", tx);
+        telemetry.addData("tx (inches) ", tx );
         telemetry.addData("ty", ty);
 
         telemetry.update();

@@ -79,8 +79,8 @@ public class Robots {
 
     public static void init202() {
         dc_motor_names = new ArrayList<>(Arrays.asList("joint1right", "joint2"));
-        max_power = new double[] {0.55, 0.55};
-        min_power = new double[] {-0.2, -0.3};
+        max_power = new double[] {0.6, 0.6};
+        min_power = new double[] {-0.2, -0.2};
         motor_max_positions = new double[] {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY};
         motor_min_positions = new double[] {Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
         invert_dc_motors = new boolean[] {false, false};
