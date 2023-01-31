@@ -32,7 +32,6 @@ public class AutonLogic202 {
                 map.get(DcMotor.class, "rightBack"),
                 map.get(DcMotor.class, "leftBack"),
                 map.get(DcMotor.class, "leftFront"),
-
         };
         wheel_list[0].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheel_list[1].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -93,27 +92,6 @@ public class AutonLogic202 {
 
     }
 
-    /** @deprecated */
-    public static void driveBad(DriveDirection direction) {
-        switch (direction) {
-            case FORWARD: {
-                drive(new double[] { 0, 1 }, 0);
-                break;
-            }
-            case LEFT: {
-                drive(new double[] { -1, 0 }, 0);
-                break;
-            }
-            case RIGHT: {
-                drive(new double[] { 1, 0 }, 0);
-                break;
-            }
-            case BACKWARD: {
-                drive(new double[] { 0, -1 }, 0);
-            }
-        }
-    }
-
     public static void stop() {
         wheel_list[0].setPower(0);
         wheel_list[1].setPower(0);
@@ -134,11 +112,11 @@ public class AutonLogic202 {
                 break;
             }
             case LEFT: {
-                setWheelPositions(new double[] { +ticks, -ticks, +ticks, -ticks });
+                setWheelPositions(new double[] { +ticks * EXTRA_STRAFE_TICKS, -ticks * EXTRA_STRAFE_TICKS, +ticks * EXTRA_STRAFE_TICKS, -ticks * EXTRA_STRAFE_TICKS });
                 break;
             }
             case RIGHT: {
-                setWheelPositions(new double[] { -ticks, +ticks, -ticks, +ticks });
+                setWheelPositions(new double[] { -ticks * EXTRA_STRAFE_TICKS, +ticks * EXTRA_STRAFE_TICKS, -ticks * EXTRA_STRAFE_TICKS, +ticks * EXTRA_STRAFE_TICKS});
                 break;
             }
         }
@@ -158,59 +136,15 @@ public class AutonLogic202 {
         driveInches(inches, DriveDirection.FORWARD);
     }
 
-    public static void drive(double[] vec, double turnAmount) {
-
-        if (vec.length != 2) {
-            throw new IllegalArgumentException("drive function vec len > 2");
-        }
-
-        double x = vec[0];
-        double y = vec[1];
-
-        double[] powers = new double[4];
-
-        // rightFront
-        powers[0] = y - x;
-        // rightBack
-        powers[1] = y + x;
-        // leftBack
-        powers[2] = y - x;
-        // leftFront
-        powers[3] = y + x;
-
-        powers[0] -= turnAmount;
-        powers[1] -= turnAmount;
-        powers[2] += turnAmount;
-        powers[3] += turnAmount;
-
-        if (max(powers) > 1) {
-            double max = max(powers);
-            for (int i = 0; i < powers.length; i++) {
-                powers[i] /= max;
-            }
-        }
-
-        for (int i = 0; i < 4; i++)
-            wheel_list[i].setPower(powers[i]);
-    }
-
-    /**
-     * finds the greatest absolute val in the arr
-     */
-    private static double max(double[] arr) {
-        double max = 1;
-        for (double v : arr) {
-            max = Math.max(max, Math.abs(v));
-        }
-
-        return max;
-    }
-
     public static void openClaw() {
         claw.setPosition(claw_open);
     }
 
     public static void closeClaw() {
         claw.setPosition(claw_closed);
+    }
+
+    public static void setArmPos(double x, double y) {
+        arm.set_position(x,y);
     }
 }

@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.AprilTag;
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.DriveDirection;
 
-@Autonomous(name="202 apriltag auton")
+@Autonomous(name="202 april tag auto")
 public class Auton202AprilTags extends LinearOpMode {
     AutonLogic202 logic = new AutonLogic202();
     AprilTag aprilTag = new AprilTag();
