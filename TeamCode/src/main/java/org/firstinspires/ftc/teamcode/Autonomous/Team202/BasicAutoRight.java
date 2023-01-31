@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.DriveDirection;
 
 @Autonomous(name="basic right")
-@Disabled
+//@Disabled
 public class BasicAutoRight extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,7 +19,8 @@ public class BasicAutoRight extends LinearOpMode {
 
         waitForStart();
 
-        logic.driveBad(DriveDirection.RIGHT);
+        logic.driveInches(24, DriveDirection.RIGHT);
+
         sleep(1500);
 
         logic.stop();

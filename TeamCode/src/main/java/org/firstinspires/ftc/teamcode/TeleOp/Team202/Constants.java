@@ -13,12 +13,12 @@ public final class Constants {
 
     public static final double wrist_angle_speed = 1.0;
 
-    public static final int tag1id = 0, tag2id = 5, tag3id = 9;
+    public static final int tag1id = 0, tag2id = 2, tag3id = 6;
 
     public static final double DRIVETRAIN_TICKS_PER_REV = ((((1+(46.0/17.0))) * (1+(46.0/11.0))) * 28.0);
 
-    // 25.4 mm/in * ticks per rev / (2 * pi * wheel diameter)
-    public static final double DRIVETRAIN_TICKS_PER_INCH = 25.4 * DRIVETRAIN_TICKS_PER_REV / (2.0 * Math.PI * 96.0);
+    // 25.4 mm/in * ticks per rev / (pi * wheel diameter) * 9 / 8 (idk why 9/8 don't ask)
+    public static final double DRIVETRAIN_TICKS_PER_INCH = (25.4 * DRIVETRAIN_TICKS_PER_REV / (96.0 * Math.PI)) * 9.0 / 8.0;
 
     public static final double robot_width = 10.393701;
     public static final double robot_length = 14.373228;

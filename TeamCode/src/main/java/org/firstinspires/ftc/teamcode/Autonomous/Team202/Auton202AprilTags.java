@@ -43,12 +43,14 @@ public class Auton202AprilTags extends LinearOpMode {
         switch (id) {
             case tag1id: {
                 logic.driveInches(24, DriveDirection.LEFT);
+                break;
             }
             case tag2id: {
-
+                break;
             }
             case tag3id: {
                 logic.driveInches(24, DriveDirection.RIGHT);
+                break;
             }
         }
     }

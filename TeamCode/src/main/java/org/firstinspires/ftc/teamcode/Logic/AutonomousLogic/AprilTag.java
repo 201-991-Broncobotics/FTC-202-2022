@@ -26,7 +26,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 
 public class AprilTag extends Thread {
-    public static int tag1count, tag2count, tag3count;
+    public int tag1count, tag2count, tag3count;
 
 
     private static boolean shouldBeRunning = false;
@@ -70,6 +70,12 @@ public class AprilTag extends Thread {
             }
         });
 
+        camera.setPipeline(aprilTagDetectionPipeline);
+
+        shouldBeRunning = true;
+
+        aprilTagDetectionPipeline.setDecimation(1f);
+
         this.start();
     }
 
@@ -77,18 +83,25 @@ public class AprilTag extends Thread {
         while (shouldBeRunning) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
+            ArrayList<Integer> ids = new ArrayList<>();
+
             if(currentDetections.size() != 0) {
                 for(AprilTagDetection tag : currentDetections) {
                     if (tag.id == tag1id) tag1count++;
                     if (tag.id == tag2id) tag2count++;
                     if (tag.id == tag3id) tag3count++;
-
-                    telem.addData("tag1 detections", tag1count);
-                    telem.addData("tag2 detections", tag2count);
-                    telem.addData("tag3 detections", tag3count);
-                    telem.update();
+                    ids.add(tag.id);
                 }
             }
+
+
+            telem.addData("length", currentDetections.size());
+            telem.addData("ids", ids.toString());
+            telem.addData("tag1 detections", tag1count);
+            telem.addData("tag2 detections", tag2count);
+            telem.addData("tag3 detections", tag3count);
+            telem.addData("runs", aprilTagDetectionPipeline.runs);
+            telem.update();
         }
     }
 
@@ -127,6 +140,8 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
     Scalar red = new Scalar(255,0,0,255);
     Scalar green = new Scalar(0,255,0,255);
     Scalar white = new Scalar(255,255,255,255);
+
+    public static int runs = 0;
 
     double fx;
     double fy;
@@ -190,8 +205,9 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
         // Run AprilTag
         detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, tagsize, fx, fy, cx, cy);
 
-        synchronized (detectionsUpdateSync)
-        {
+        runs++;
+
+        synchronized (detectionsUpdateSync) {
             detectionsUpdate = detections;
         }
 

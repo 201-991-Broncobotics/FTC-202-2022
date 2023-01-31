@@ -133,11 +133,11 @@ public class AutonLogic202 {
                 setWheelPositions(new double[] { -ticks, -ticks, -ticks, -ticks });
                 break;
             }
-            case RIGHT: {
+            case LEFT: {
                 setWheelPositions(new double[] { +ticks, -ticks, +ticks, -ticks });
                 break;
             }
-            case LEFT: {
+            case RIGHT: {
                 setWheelPositions(new double[] { -ticks, +ticks, -ticks, +ticks });
                 break;
             }
