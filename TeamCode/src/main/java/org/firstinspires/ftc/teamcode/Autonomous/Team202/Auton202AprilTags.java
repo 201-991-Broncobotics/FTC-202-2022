@@ -21,25 +21,37 @@ public class Auton202AprilTags extends LinearOpMode {
         logic.init(hardwareMap, telemetry);
         aprilTag.init(hardwareMap, telemetry);
 
+        logic.closeClaw();
         aprilTag.startScanning();
 
         waitForStart();
+        aprilTag.gameStarted();
 
-        // left of square to center of square
-        logic.driveInches(12 - robot_width / 2, DriveDirection.RIGHT);
-        sleep(2000);
+        // put camera in front of april tag
+        logic.driveInches(12 - robot_width / 2 - CAMERA_FROM_CENTER_X, DriveDirection.RIGHT);
+        sleep(500);
 
-        // stop right in front of the cone with sleeve
-        logic.driveInches(36 - robot_length / 2 - CAMERA_FROM_CENTER, DriveDirection.FORWARD);
-        sleep(2000);
+        final double gap = 3;
+        logic.driveInches(12 - robot_length / 2 - gap, DriveDirection.FORWARD);
+        sleep(1000);
 
-        // drive to the center of the square
-        logic.driveInches(CAMERA_FROM_CENTER, DriveDirection.FORWARD);
-        sleep(2000);
+        logic.driveInches(CAMERA_FROM_CENTER_X, DriveDirection.RIGHT);
+        sleep(3000);
+
+        // get the camera closer to the april tag (might need to be removed)
+        logic.driveInches(24 + gap, DriveDirection.FORWARD);
+        sleep(500);
+
+        // wait for the april tag to be scanned
+
+
+        // drive to the center of the square that had the sleeve
+
 
         aprilTag.stopScanning();
         int id = aprilTag.getMostDetected();
 
+        // move to the right square depending on april tag pos
         switch (id) {
             case tag1id: {
                 logic.driveInches(24, DriveDirection.LEFT);

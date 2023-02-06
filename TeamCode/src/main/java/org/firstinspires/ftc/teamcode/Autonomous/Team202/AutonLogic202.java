@@ -10,14 +10,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Logic.AutonomousLogic.DriveDirection;
 
 public class AutonLogic202 {
-    public static DoubleArm arm;
+    public DoubleArm arm;
     public static Servo claw;
     private static HardwareMap map;
     private static DcMotor rf, lf, rb, lb;
 
     private static DcMotor[] wheel_list = new DcMotor[4];
+    private static Telemetry telem;
 
-    public static void init(HardwareMap _map, Telemetry _telemetry) {
+    public void init(HardwareMap _map, Telemetry _telemetry) {
+
+        telem = _telemetry;
 
         map = _map;
         arm = new DoubleArm();
@@ -43,11 +46,11 @@ public class AutonLogic202 {
     }
 
     public void initArm() {
-        arm.init(map);
+        arm.init(map, telem);
         arm.start();
     }
 
-    private static void resetEncoders() {
+    private void resetEncoders() {
         wheel_list[0].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheel_list[1].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheel_list[2].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -59,7 +62,7 @@ public class AutonLogic202 {
         wheel_list[3].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    private static void driveWithEncoders() {
+    private void driveWithEncoders() {
 
         wheel_list[0].setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wheel_list[1].setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -80,7 +83,7 @@ public class AutonLogic202 {
         stop();
     }
 
-    public static void setWheelPositions(double[] positions) {
+    public void setWheelPositions(double[] positions) {
         if (positions.length != 4) {
             throw new IllegalArgumentException("positions len != 4, it is " + positions.length);
         }
@@ -92,14 +95,14 @@ public class AutonLogic202 {
 
     }
 
-    public static void stop() {
+    public void stop() {
         wheel_list[0].setPower(0);
         wheel_list[1].setPower(0);
         wheel_list[2].setPower(0);
         wheel_list[3].setPower(0);
     }
 
-    public static void driveTicks(double ticks, DriveDirection direction) {
+    public void driveTicks(double ticks, DriveDirection direction) {
         resetEncoders();
         // dont worry about why its all backwards :)
         switch (direction) {
@@ -123,28 +126,35 @@ public class AutonLogic202 {
         driveWithEncoders();
     }
 
-    public static void driveTicks(double ticks) {
+    public void driveTicks(double ticks) {
         driveTicks(ticks, DriveDirection.FORWARD);
     }
 
-    public static void driveInches(double inches, DriveDirection direction) {
+    public void driveInches(double inches, DriveDirection direction) {
         int ticks = (int) (inches * DRIVETRAIN_TICKS_PER_INCH);
         driveTicks(ticks, direction);
     }
 
-    public static void driveInches(double inches) {
+    public void driveInches(double inches) {
         driveInches(inches, DriveDirection.FORWARD);
     }
 
-    public static void openClaw() {
+    public void openClaw() {
         claw.setPosition(claw_open);
     }
 
-    public static void closeClaw() {
+    public void closeClaw() {
         claw.setPosition(claw_closed);
     }
 
-    public static void setArmPos(double x, double y) {
+    public void setArmPos(double x, double y) {
         arm.set_position(x,y);
+    }
+
+    public void waitForArm() {
+        int runCount = 0;
+        while (arm.isBusy()) {
+            telem.addData("arm run count", runCount);
+        }
     }
 }

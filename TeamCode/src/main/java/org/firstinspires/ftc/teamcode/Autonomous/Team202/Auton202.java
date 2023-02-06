@@ -21,65 +21,69 @@ public class Auton202 extends LinearOpMode {
         logic.init(hardwareMap, telemetry);
         aprilTag.init(hardwareMap, telemetry);
 
+        logic.closeClaw();
         aprilTag.startScanning();
 
-        logic.closeClaw();
-
         waitForStart();
+        aprilTag.gameStarted();
 
-        // left of square to center of square
-        logic.driveInches(12 - robot_width / 2, DriveDirection.RIGHT);
-        sleep(4500);
+        sleep(1000);
+        final double gap = 5.0;
+        final double xgap = 2.5;
+        logic.driveInches(gap, DriveDirection.FORWARD);
 
-        // stop right in front of the cone with sleeve
-        logic.driveInches(36 - robot_length / 2, DriveDirection.FORWARD);
-        sleep(2000);
+        // put camera in front of april tag
+        logic.driveInches(12 - robot_width / 2 - CAMERA_FROM_CENTER_X, DriveDirection.RIGHT);
+        sleep(500);
+
+        // wait for april tags
+        sleep(3000);
 
         aprilTag.stopScanning();
         int id = aprilTag.getMostDetected();
 
-        logic.driveInches(24, DriveDirection.FORWARD);
-        sleep(1000);
+        // drive to the center of the square that had the sleeve
+        logic.driveInches(24 - CAMERA_FROM_CENTER_X - xgap, DriveDirection.LEFT);
+        sleep(500);
+
+        logic.driveInches(48 - gap + robot_length / 2, DriveDirection.FORWARD);
+        sleep(500);
 
         logic.initArm();
+        // wait for arm to settle
+        sleep(500);
+        final double armX = 0.3;
 
-        sleep(3000);
-
-        final double armX = Math.sqrt(4 - 1.93 * 1.93 - .01);
-
-        logic.setArmPos(armX,1.93);
-        sleep(2000);
+        logic.setArmPos(0.3,1.95);
+        sleep(4000);
 
         // the cone will be ARM_FROM_CENTER + Math.sqrt(4 - 1.93 * 1.93 - .01) * ARM_LENGTH + CLAW_OFFSET
         // from the center of the robot, so we need to adjust for that.
 
-        // ~14
+        // ~11
         final double CONE_FROM_CENTER = ARM_FROM_CENTER + armX * ARM_LENGTH + CLAW_OFFSET;
 
-        logic.driveInches(CONE_FROM_CENTER - 12, DriveDirection.BACKWARD);
+        logic.driveInches(12 - CONE_FROM_CENTER, DriveDirection.FORWARD);
         sleep(1000);
 
-        logic.driveInches(12, DriveDirection.RIGHT);
+        logic.driveInches(36 - xgap, DriveDirection.RIGHT);
         sleep(1000);
-
-        // theoretically, we should be right above the pole rn...
-
-        // to help drop the cone onto the pole
-        logic.setArmPos(armX, 1.85);
-
 
         logic.openClaw();
 
-        logic.setArmPos(0.3, -0.6); // op x in teleop
+        logic.setArmPos(1, 0);
+        logic.arm.quit();
 
-        sleep(2000);
+        sleep(1000);
+
+        logic.openClaw();
 
         logic.driveInches(CONE_FROM_CENTER - 12, DriveDirection.FORWARD);
         sleep(500);
 
         switch (id) {
             case tag1id: {
-                logic.driveInches(36, DriveDirection.LEFT);
+                logic.driveInches(36,DriveDirection.LEFT);
                 break;
             }
             case tag2id: {

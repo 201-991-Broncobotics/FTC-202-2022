@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class AprilTag extends Thread {
     public int tag1count, tag2count, tag3count;
 
+    private boolean started = false;
 
     private static boolean shouldBeRunning = false;
 
@@ -79,18 +80,24 @@ public class AprilTag extends Thread {
         this.start();
     }
 
+    public void gameStarted() {
+        started = true;
+    }
+
     public void run() {
         while (shouldBeRunning) {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             ArrayList<Integer> ids = new ArrayList<>();
 
-            if(currentDetections.size() != 0) {
-                for(AprilTagDetection tag : currentDetections) {
-                    if (tag.id == tag1id) tag1count++;
-                    if (tag.id == tag2id) tag2count++;
-                    if (tag.id == tag3id) tag3count++;
-                    ids.add(tag.id);
+            if (started) {
+                if (currentDetections.size() != 0) {
+                    for (AprilTagDetection tag : currentDetections) {
+                        if (tag.id == tag1id) tag1count++;
+                        if (tag.id == tag2id) tag2count++;
+                        if (tag.id == tag3id) tag3count++;
+                        ids.add(tag.id);
+                    }
                 }
             }
 
@@ -102,6 +109,7 @@ public class AprilTag extends Thread {
             telem.addData("tag3 detections", tag3count);
             telem.addData("runs", aprilTagDetectionPipeline.runs);
             telem.update();
+
         }
     }
 
